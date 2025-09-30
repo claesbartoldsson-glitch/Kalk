@@ -5,118 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blend‑kalkylator</title>
   <style>
-    :root{ --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB; --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9; --green:#2E7D32; --accent:#2563EB; --pie1:#60A5FA; --pie2:#34D399; --pie3:#FBBF24; --pie4:#F472B6; --pie5:#A78BFA; --pie6:#F97316; --pie7:#22D3EE; --pie8:#C084FC; }
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    :root{
+      --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB;
+      --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9;
+      --green:#2E7D32; --accent:#2563EB;
+      --pie1:#60A5FA; --pie2:#34D399; --pie3:#FBBF24; --pie4:#F472B6; --pie5:#A78BFA; --pie6:#F97316; --pie7:#22D3EE; --pie8:#C084FC;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
     h1{font-size:20px;margin:0 0 12px;font-weight:700}
     .container{max-width:1160px;margin:0 auto;padding:16px}
-    .grid{display:grid;gap:16px} @media(min-width:1100px){ .cols-2{grid-template-columns:1fr 1fr} }
+    .grid{display:grid;gap:16px}
+    @media(min-width:1024px){ .cols-2{grid-template-columns:1fr 1fr} }
     .card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);padding:16px}
-    .card h2{margin:0 0 4px;font-size:14px;font-weight:600} .card .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
-    .muted{color:var(--muted);font-size:12px} .btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap}
-    .btn:active{transform:translateY(1px)} .right{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-    table{width:100%;border-collapse:separate;border-spacing:0 6px} th, td{font-size:12px;text-align:left;vertical-align:middle}
+    .card h2{margin:0 0 4px;font-size:14px;font-weight:600}
+    .card .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
+    .muted{color:var(--muted);font-size:12px}
+    .btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap}
+    .btn:active{transform:translateY(1px)}
+    .right{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+    /* Table */
+    table{width:100%;border-collapse:separate;border-spacing:0 6px}
+    th, td{font-size:12px;text-align:left;vertical-align:middle}
     th{color:var(--muted);font-weight:600;padding:0 6px}
     td{background:#fff;border:1px solid var(--border);padding:4px 6px;border-radius:6px}
-    td input{width:100%;border:none;outline:none;background:transparent;height:32px;line-height:20px;padding:0 2px}
+    /* Match basvin input height and background */
+    td input{width:100%;border:none;outline:none;background:transparent;height:32px;line-height:20px;padding:0 2px;font-size:12px}
     .row-input td{background:var(--input)}
     .nowrap{white-space:nowrap}
+    /* Keep remove button compact without changing row height */
+    .btn-remove{background:#fff;color:#1F2937;border:1px solid var(--border);padding:0 10px;height:28px;border-radius:6px;cursor:pointer;white-space:nowrap}
+    .btn-remove:hover{border-color:#CBD5E1}
+    .btn-remove:active{transform:translateY(1px)}
+
+    /* Summary pills (same style as basvin) */
     .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:2px 0}
     .dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px}
-    .back a{font-size:13px;color:#2563EB;text-decoration:none}
-    @media print{ .btn, .right{display:none} body{background:#fff} .card{page-break-inside:avoid} }
+
     /* Pie chart */
-    .pie-wrap{width:100%;height:280px}
+    .pie-wrap{width:100%;height:260px}
     .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:12px}
     .leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
-    .stack{display:grid;gap:16px}
-    .inputs-inline{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .inputs-inline label{display:block}
-    .lab{display:block;margin-bottom:4px;color:var(--muted);font-size:12px}
-    .row{display:flex;align-items:center;gap:6px}
-    input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;height:32px}
-    .const input[type=number]{background:var(--const)}
     .mono{font-variant-numeric:tabular-nums}
+
+    /* Print */
+    @media print{ .btn, .right{display:none} body{background:#fff} .card{page-break-inside:avoid} }
+
+    /* Steps (snabbguide) */
+    .steps{counter-reset:step}
+    .step{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+    .step .bubble{counter-increment:step;min-width:22px;height:22px;border-radius:999px;background:#E5E7EB;color:#111827;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+    .step .content{font-size:13px;color:#374151}
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="back" style="margin-bottom:8px"><a href="../">← Till kalkylatorer</a></div>
+    <div class="back" style="margin-bottom:8px"><a href="../" style="color:#2563EB;text-decoration:none;font-size:13px">← Till kalkylatorer</a></div>
     <header><h1>Blend‑kalkylator</h1></header>
 
-    <div class="grid cols-2">
-      <div class="card">
-        <h2>Lots & analyser</h2><p class="sub">All inmatning på en rad per lot, ”Ta bort” ligger nu alltid på samma rad</p>
-        <div style="overflow:auto">
-          <table id="lots">
-            <thead>
-              <tr>
-                <th style="min-width:140px">Namn</th>
-                <th style="min-width:120px">Tank</th>
-                <th style="min-width:90px">Volym (L)</th>
-                <th style="min-width:90px">Alk (%)</th>
-                <th style="min-width:90px">RS (g/L)</th>
-                <th style="min-width:90px">TA (g/L)</th>
-                <th style="min-width:80px">pH</th>
-                <th class="nowrap" style="min-width:80px;text-align:center">Åtgärd</th>
-              </tr>
-            </thead>
-            <tbody id="lot-body"></tbody>
-          </table>
-        </div>
-        <div class="right" style="margin-top:8px">
-          <button class="btn" onclick="addRow()">Lägg till lot</button>
-          <button class="btn" onclick="clearRows()">Töm</button>
-          <button class="btn" onclick="window.print()">Skriv ut / PDF</button>
-        </div>
+    <!-- Rad 1: Lots & analyser (ensam rad) -->
+    <div class="card">
+      <h2>Lots & analyser</h2>
+      <p class="sub">All inmatning på en rad per lot. Knappen påverkar inte radhöjden.</p>
+      <div style="overflow:auto">
+        <table id="lots">
+          <thead>
+            <tr>
+              <th style="min-width:160px">Namn</th>
+              <th style="min-width:120px">Tank</th>
+              <th style="min-width:90px">Volym (L)</th>
+              <th style="min-width:90px">Alk (%)</th>
+              <th style="min-width:90px">RS (g/L)</th>
+              <th style="min-width:90px">TA (g/L)</th>
+              <th style="min-width:80px">pH</th>
+              <th class="nowrap" style="min-width:90px;text-align:center">Åtgärd</th>
+            </tr>
+          </thead>
+          <tbody id="lot-body"></tbody>
+        </table>
       </div>
-
-      <div class="card stack">
-        <div>
-          <h2>Resultat</h2><p class="sub">Viktat per volym (pH ≈ log10‑viktning)</p>
-          <div class="summary" id="summary">
-            <div class="pill"><span class="muted">Antal lots</span><span><span class="dot"></span><strong id="nLots">0</strong></span></div>
-            <div class="pill"><span class="muted">Total volym</span><span><span class="dot"></span><strong id="sumVol">0</strong> L</span></div>
-            <div class="pill"><span class="muted">Alkohol</span><span><span class="dot"></span><strong id="mixAlk">–</strong> %</span></div>
-            <div class="pill"><span class="muted">RS (socker)</span><span><span class="dot"></span><strong id="mixRS">–</strong> g/L</span></div>
-            <div class="pill"><span class="muted">TA (syra)</span><span><span class="dot"></span><strong id="mixTA">–</strong> g/L</span></div>
-            <div class="pill"><span class="muted">pH (approx)</span><span><span class="dot"></span><strong id="mixpH">–</strong></span></div>
-          </div>
-        </div>
-
-        <div>
-          <h2>Andelar per lot</h2><p class="sub">Tårtdiagram av volymandelar</p>
-          <div class="pie-wrap"><svg id="pie" width="100%" height="100%" aria-label="Lotandeler"></svg></div>
-          <div id="pie-legend" class="legend"></div>
-        </div>
+      <div class="right" style="margin-top:8px">
+        <button class="btn" onclick="addRow()">Lägg till lot</button>
+        <button class="btn" onclick="clearRows()">Töm</button>
+        <button class="btn" onclick="window.print()">Skriv ut / PDF</button>
       </div>
     </div>
 
+    <!-- Rad 2: Resultat (vänster) + Tårtdiagram (höger) -->
     <div class="grid cols-2">
       <div class="card">
-        <h2>Provblend</h2><p class="sub">Räkna ut hur mycket du ska dra av varje lot för en testblend</p>
-        <div class="inputs-inline const">
+        <h2>Resultat</h2><p class="sub">Viktat per volym (pH ≈ log10‑viktning)</p>
+        <div class="summary" id="summary">
+          <div class="pill"><span class="muted">Antal lots</span><span><span class="dot"></span><strong id="nLots">0</strong></span></div>
+          <div class="pill"><span class="muted">Total volym</span><span><span class="dot"></span><strong id="sumVol">0</strong> L</span></div>
+          <div class="pill"><span class="muted">Alkohol</span><span><span class="dot"></span><strong id="mixAlk">–</strong> %</span></div>
+          <div class="pill"><span class="muted">RS (socker)</span><span><span class="dot"></span><strong id="mixRS">–</strong> g/L</span></div>
+          <div class="pill"><span class="muted">TA (syra)</span><span><span class="dot"></span><strong id="mixTA">–</strong> g/L</span></div>
+          <div class="pill"><span class="muted">pH (approx)</span><span><span class="dot"></span><strong id="mixpH">–</strong></span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Andelar per lot</h2><p class="sub">Tårtdiagram av volymandelar</p>
+        <div class="pie-wrap"><svg id="pie" width="100%" height="100%" aria-label="Lotandeler"></svg></div>
+        <div id="pie-legend" class="legend"></div>
+      </div>
+    </div>
+
+    <!-- Rad 3: Provblend (vänster) + Snabbguide (höger) -->
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Provblend</h2><p class="sub">Beräkna uttag per lot för en testblend</p>
+        <div class="grid" style="grid-template-columns:1fr 1fr; gap:8px">
           <label>
-            <span class="lab">Antal provare</span>
-            <input id="tasters" type="number" step="1" value="6" min="1" />
+            <span class="muted">Antal provare</span>
+            <input id="tasters" type="number" step="1" value="6" min="1" style="background:#fff;border:1px solid var(--border);border-radius:6px;height:32px;padding:6px 8px" />
           </label>
           <label>
-            <span class="lab">Mängd per provglas (cl)</span>
-            <input id="pourCl" type="number" step="0.5" value="5" min="0" />
+            <span class="muted">Mängd per provglas (cl)</span>
+            <input id="pourCl" type="number" step="0.5" value="5" min="0" style="background:#fff;border:1px solid var(--border);border-radius:6px;height:32px;padding:6px 8px" />
           </label>
         </div>
         <div id="draw-table-wrap" style="overflow:auto; margin-top:10px"></div>
       </div>
+
       <div class="card">
         <h2>Snabbguide</h2>
-        <p class="muted">Välj rader, fyll i **Volym (L)** och analyser. Under ”Provblend” skriv **antal provare** och **cl per glas** – tabellen visar exakt hur många <b>ml per lot</b> du drar för att blanda en representativ provblend.</p>
+        <div class="steps">
+          <div class="step"><div class="bubble">1</div><div class="content">Fyll i <b>Namn</b>, <b>Tank</b> och <b>Volym (L)</b> för varje lot. Lägg gärna till analyser (Alk, RS, TA, pH).</div></div>
+          <div class="step"><div class="bubble">2</div><div class="content">Kontrollera <b>Resultat</b> och <b>Tårtdiagram</b> – de uppdateras direkt när du ändrar indata.</div></div>
+          <div class="step"><div class="bubble">3</div><div class="content">I <b>Provblend</b>: ange <b>Antal provare</b> och <b>cl per glas</b>. Tabellen visar hur många <b>ml per lot</b> du ska dra för en representativ provblend.</div></div>
+          <div class="step"><div class="bubble">4</div><div class="content">Dra uppmätt volym från varje tank (gärna cylinder), blanda i bägare, <b>märk</b> med lot/tank och datum.</div></div>
+          <div class="step"><div class="bubble">5</div><div class="content">Skriv ut med <b>Skriv ut / PDF</b> om du vill spara uppställningen tillsammans med resultaten.</div></div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const tbody = document.getElementById('lot-body');
-    const tEl = (sel)=>document.querySelector(sel);
+    const $ = (sel)=>document.querySelector(sel);
     const fmt = (n, d=2)=> Number.isFinite(n) ? n.toFixed(d) : '–';
     const pieColors = ['#60A5FA','#34D399','#FBBF24','#F472B6','#A78BFA','#F97316','#22D3EE','#C084FC','#4ADE80','#FCA5A5','#93C5FD','#86EFAC'];
 
@@ -132,31 +161,30 @@
         <td><input type="number" step="0.1" value="${preset?.ta??''}"></td>
         <td><input type="number" step="0.01" value="${preset?.ph??''}"></td>
         <td style="text-align:center">
-          <button class="btn nowrap" onclick="this.closest('tr').remove(); recalc();">Ta bort</button>
+          <button class="btn-remove" onclick="this.closest('tr').remove(); recalc();">Ta bort</button>
         </td>
       `;
-      Array.from(tr.querySelectorAll('input')).forEach(inp=>{
+      tr.querySelectorAll('input').forEach(inp=>{
         inp.addEventListener('input', recalc);
         inp.addEventListener('change', recalc);
       });
       tbody.appendChild(tr);
       recalc();
     }
-
     function clearRows(){ tbody.innerHTML=''; recalc(); }
 
     function getLots(){
-      const rows = Array.from(tbody.querySelectorAll('tr'));
-      return rows.map(r=>{
+      return Array.from(tbody.querySelectorAll('tr')).map(r=>{
         const [nameEl, tankEl, volEl, alkEl, rsEl, taEl, phEl] = r.querySelectorAll('input');
-        const name = nameEl.value.trim();
-        const tank = tankEl.value.trim();
-        const vol = Number(volEl.value);
-        const alk = Number(alkEl.value);
-        const rs  = Number(rsEl.value);
-        const ta  = Number(taEl.value);
-        const ph  = Number(phEl.value);
-        return { name, tank, vol, alk, rs, ta, ph };
+        return {
+          name: nameEl.value.trim(),
+          tank: tankEl.value.trim(),
+          vol : Number(volEl.value),
+          alk : Number(alkEl.value),
+          rs  : Number(rsEl.value),
+          ta  : Number(taEl.value),
+          ph  : Number(phEl.value),
+        };
       }).filter(x=>Number.isFinite(x.vol) && x.vol>0);
     }
 
@@ -171,12 +199,12 @@
       const sumH   = lots.reduce((s,l)=> s + w(l.vol)*Math.pow(10, -l.ph), 0);
       const mixpH  = sumH>0 ? -Math.log10(sumH) : NaN;
 
-      tEl('#nLots').textContent = lots.length;
-      tEl('#sumVol').textContent = fmt(totalVol, 0);
-      tEl('#mixAlk').textContent = fmt(mixAlk, 2);
-      tEl('#mixRS').textContent  = fmt(mixRS, 2);
-      tEl('#mixTA').textContent  = fmt(mixTA, 2);
-      tEl('#mixpH').textContent  = Number.isFinite(mixpH) ? mixpH.toFixed(2) : '–';
+      $('#nLots').textContent = lots.length;
+      $('#sumVol').textContent = fmt(totalVol, 0);
+      $('#mixAlk').textContent = fmt(mixAlk, 2);
+      $('#mixRS').textContent  = fmt(mixRS, 2);
+      $('#mixTA').textContent  = fmt(mixTA, 2);
+      $('#mixpH').textContent  = Number.isFinite(mixpH) ? mixpH.toFixed(2) : '–';
 
       drawPie(lots, totalVol);
       updateDrawTable(lots, totalVol);
@@ -184,10 +212,10 @@
 
     function drawPie(lots, totalVol){
       const svg = document.getElementById('pie');
-      const W = svg.clientWidth || 520, H = svg.clientHeight || 280;
+      const W = svg.clientWidth || 520, H = svg.clientHeight || 260;
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       const cx = W/2, cy = H/2, r = Math.min(W,H)*0.34;
-      let startAngle = -Math.PI/2;
+      let start = -Math.PI/2;
       const legend = document.getElementById('pie-legend');
       legend.innerHTML = '';
 
@@ -201,9 +229,9 @@
       lots.forEach((l, i)=>{
         const frac = l.vol / totalVol;
         const angle = frac * Math.PI * 2;
-        const endAngle = startAngle + angle;
-        const x1 = cx + r*Math.cos(startAngle), y1 = cy + r*Math.sin(startAngle);
-        const x2 = cx + r*Math.cos(endAngle),   y2 = cy + r*Math.sin(endAngle);
+        const end = start + angle;
+        const x1 = cx + r*Math.cos(start), y1 = cy + r*Math.sin(start);
+        const x2 = cx + r*Math.cos(end),   y2 = cy + r*Math.sin(end);
         const largeArc = angle > Math.PI ? 1 : 0;
         const path = document.createElementNS(svg.namespaceURI,"path");
         path.setAttribute("d", `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`);
@@ -211,8 +239,7 @@
         path.setAttribute("fill", color);
         svg.appendChild(path);
 
-        // label
-        const mid = (startAngle + endAngle)/2;
+        const mid = (start + end)/2;
         const lx = cx + (r*0.65)*Math.cos(mid), ly = cy + (r*0.65)*Math.sin(mid);
         const label = document.createElementNS(svg.namespaceURI,"text");
         label.setAttribute("x", lx); label.setAttribute("y", ly+4); label.setAttribute("text-anchor","middle");
@@ -220,14 +247,13 @@
         label.textContent = (frac*100).toFixed(1) + "%";
         svg.appendChild(label);
 
-        // legend item
         const item = document.createElement("div");
         const dot = document.createElement("span"); dot.className = "leg-dot"; dot.style.background = color;
         const name = document.createElement("span"); name.textContent = `${l.name || 'Lot'}${l.tank? ' ('+l.tank+')':''} — ${(frac*100).toFixed(1)}%`;
         item.appendChild(dot); item.appendChild(name);
         legend.appendChild(item);
 
-        startAngle = endAngle;
+        start = end;
       });
     }
 
@@ -248,8 +274,7 @@
       tbl.appendChild(thead);
 
       const tbody2 = document.createElement('tbody');
-
-      const totalMl = (Number.isFinite(tasters) && Number.isFinite(pourCl)) ? tasters * pourCl * 10 /* cl->ml */ : NaN;
+      const totalMl = (Number.isFinite(tasters) && Number.isFinite(pourCl)) ? tasters * pourCl * 10 : NaN;
       let drawnSum = 0;
 
       lots.forEach(l=>{
@@ -275,10 +300,12 @@
       wrap.appendChild(p);
     }
 
-    document.getElementById('tasters').addEventListener('input', recalc);
-    document.getElementById('pourCl').addEventListener('input', recalc);
+    // Listeners
+    document.addEventListener('input', (e)=>{
+      if (e.target && (e.target.id === 'tasters' || e.target.id === 'pourCl')) recalc();
+    });
 
-    // seed
+    // Seed-exempel
     addRow({ name:'Lot A', tank:'T12', vol: 1000, alk: 12.5, rs: 3.0, ta: 6.5, ph: 3.10 });
     addRow({ name:'Lot B', tank:'T7',  vol: 500,  alk: 11.8, rs: 2.0, ta: 7.2, ph: 3.25 });
   </script>
