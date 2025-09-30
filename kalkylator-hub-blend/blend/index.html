@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blend‑kalkylator</title>
+  <style>
+    :root{ --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB; --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9; --green:#2E7D32; --accent:#2563EB; }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    h1{font-size:20px;margin:0 0 12px;font-weight:700}
+    .container{max-width:1100px;margin:0 auto;padding:16px}
+    .grid{display:grid;gap:16px} @media(min-width:980px){ .cols-2{grid-template-columns:1fr 1fr} }
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);padding:16px}
+    .card h2{margin:0 0 4px;font-size:14px;font-weight:600} .card .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
+    .muted{color:var(--muted);font-size:12px} .btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+    .btn:active{transform:translateY(1px)} .right{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+    table{width:100%;border-collapse:separate;border-spacing:0 6px} th, td{font-size:12px;text-align:left} th{color:var(--muted);font-weight:600;padding:0 6px}
+    td{background:#fff;border:1px solid var(--border);padding:6px;border-radius:6px}
+    td input{width:100%;border:none;outline:none;background:transparent}
+    .row-input td{background:var(--input)} .row-const td{background:var(--const)}
+    .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:2px 0}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px}
+    .back a{font-size:13px;color:#2563EB;text-decoration:none}
+    @media print{ .btn, .right{display:none} body{background:#fff} .card{page-break-inside:avoid} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="back" style="margin-bottom:8px"><a href="../">← Till kalkylatorer</a></div>
+    <header><h1>Blend‑kalkylator</h1></header>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Lots & analyser</h2><p class="sub">Lägg till rader för varje lot och fyll i volym och analyser</p>
+        <div style="overflow:auto">
+          <table id="lots">
+            <thead>
+              <tr>
+                <th style="min-width:120px">Namn</th>
+                <th style="min-width:80px">Volym (L)</th>
+                <th style="min-width:80px">Alk (%)</th>
+                <th style="min-width:80px">RS (g/L)</th>
+                <th style="min-width:80px">TA (g/L)</th>
+                <th style="min-width:70px">pH</th>
+                <th style="min-width:60px"></th>
+              </tr>
+            </thead>
+            <tbody id="lot-body"></tbody>
+          </table>
+        </div>
+        <div class="right" style="margin-top:8px">
+          <button class="btn" onclick="addRow()">Lägg till lot</button>
+          <button class="btn" onclick="clearRows()">Töm</button>
+          <button class="btn" onclick="window.print()">Skriv ut / PDF</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Resultat</h2><p class="sub">Viktat per volym (förenklad pH‑approximation)</p>
+        <div class="summary" id="summary">
+          <div class="pill"><span class="muted">Antal lots</span><span><span class="dot"></span><strong id="nLots">0</strong></span></div>
+          <div class="pill"><span class="muted">Total volym</span><span><span class="dot"></span><strong id="sumVol">0</strong> L</span></div>
+          <div class="pill"><span class="muted">Alkohol</span><span><span class="dot"></span><strong id="mixAlk">–</strong> %</span></div>
+          <div class="pill"><span class="muted">RS (socker)</span><span><span class="dot"></span><strong id="mixRS">–</strong> g/L</span></div>
+          <div class="pill"><span class="muted">TA (syra)</span><span><span class="dot"></span><strong id="mixTA">–</strong> g/L</span></div>
+          <div class="pill"><span class="muted">pH (approx)</span><span><span class="dot"></span><strong id="mixpH">–</strong></span></div>
+        </div>
+        <p class="muted" style="margin-top:8px">Obs: pH beräknas här med enkel log10‑viktning för att ge en rimlig indikation (inte kemiskt exakt).</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tbody = document.getElementById('lot-body');
+    const fmt = (n, d=2)=> Number.isFinite(n) ? n.toFixed(d) : '–';
+
+    function addRow(preset){
+      const tr = document.createElement('tr');
+      tr.className = 'row-input';
+      tr.innerHTML = `
+        <td><input placeholder="Lot-namn" value="${preset?.name??''}"></td>
+        <td><input type="number" step="1" value="${preset?.vol??''}"></td>
+        <td><input type="number" step="0.01" value="${preset?.alk??''}"></td>
+        <td><input type="number" step="0.1" value="${preset?.rs??''}"></td>
+        <td><input type="number" step="0.1" value="${preset?.ta??''}"></td>
+        <td><input type="number" step="0.01" value="${preset?.ph??''}"></td>
+        <td style="text-align:center"><button class="btn" onclick="this.closest('tr').remove(); recalc();">Ta bort</button></td>
+      `;
+      Array.from(tr.querySelectorAll('input')).forEach(inp=>{
+        inp.addEventListener('input', recalc);
+        inp.addEventListener('change', recalc);
+      });
+      tbody.appendChild(tr);
+      recalc();
+    }
+    function clearRows(){ tbody.innerHTML=''; recalc(); }
+
+    function recalc(){
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const lots = rows.map(r=>{
+        const [nameEl, volEl, alkEl, rsEl, taEl, phEl] = r.querySelectorAll('input');
+        const name = nameEl.value.trim();
+        const vol = Number(volEl.value);
+        const alk = Number(alkEl.value);
+        const rs  = Number(rsEl.value);
+        const ta  = Number(taEl.value);
+        const ph  = Number(phEl.value);
+        return { name, vol, alk, rs, ta, ph };
+      }).filter(x=>Number.isFinite(x.vol) && x.vol>0);
+
+      const totalVol = lots.reduce((s,l)=>s + (l.vol||0), 0);
+      const w = (v)=> totalVol>0 ? v/totalVol : 0;
+
+      // Volymviktat (linjärt) för Alk, RS, TA
+      const mixAlk = lots.reduce((s,l)=> s + w(l.vol)*l.alk, 0);
+      const mixRS  = lots.reduce((s,l)=> s + w(l.vol)*l.rs, 0);
+      const mixTA  = lots.reduce((s,l)=> s + w(l.vol)*l.ta, 0);
+
+      // Enkel pH-approx: viktad log10 av [H+] => pH = -log10(sum(w_i * 10^-pH_i))
+      const sumH = lots.reduce((s,l)=> s + w(l.vol)*Math.pow(10, -l.ph), 0);
+      const mixpH = sumH>0 ? -Math.log10(sumH) : NaN;
+
+      document.getElementById('nLots').textContent = lots.length;
+      document.getElementById('sumVol').textContent = fmt(totalVol, 0);
+      document.getElementById('mixAlk').textContent = fmt(mixAlk, 2);
+      document.getElementById('mixRS').textContent  = fmt(mixRS, 2);
+      document.getElementById('mixTA').textContent  = fmt(mixTA, 2);
+      document.getElementById('mixpH').textContent  = Number.isFinite(mixpH) ? mixpH.toFixed(2) : '–';
+    }
+
+    // seed med två rader som exempel
+    addRow({ name:'Lot A', vol: 1000, alk: 12.5, rs: 3.0, ta: 6.5, ph: 3.10 });
+    addRow({ name:'Lot B', vol: 500,  alk: 11.8, rs: 2.0, ta: 7.2, ph: 3.25 });
+  </script>
+</body>
+</html>
