@@ -40,7 +40,7 @@
     input[type=checkbox]{width:16px;height:16px}
 
     /* Sammanfattning */
-    .summary{display:grid;grid-template-columns:1fr;gap:8px} /* en kolumn */
+    .summary{display:grid;grid-template-columns:1fr;gap:8px}
     .pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:2px 0}
     .dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px}
 
@@ -107,7 +107,6 @@
       <div class="card">
         <h2>Resultat</h2><p class="sub">Viktat per volym (pH ≈ log10‑viktning)</p>
         <div class="summary" id="summary">
-          <!-- Antal lots borttagen -->
           <div class="pill"><span class="muted">Total volym</span><span><span class="dot"></span><strong id="sumVol">0</strong> L</span></div>
           <div class="pill"><span class="muted">Alkohol</span><span><span class="dot"></span><strong id="mixAlk">–</strong> %</span></div>
           <div class="pill"><span class="muted">RS (socker)</span><span><span class="dot"></span><strong id="mixRS">–</strong> g/L</span></div>
@@ -164,13 +163,13 @@
       tr.className = 'row-input';
       tr.innerHTML = `
         <td class="cb-cell"><div class="cell"><input type="checkbox" /></div></td>
-        <td><div class="cell"><input placeholder="Lot-namn" value="\${preset?.name??''}"></div></td>
-        <td><div class="cell"><input placeholder="Tank" value="\${preset?.tank??''}"></div></td>
-        <td><div class="cell"><input type="number" step="1" value="\${preset?.vol??''}"></div></td>
-        <td><div class="cell"><input type="number" step="0.01" value="\${preset?.alk??''}"></div></td>
-        <td><div class="cell"><input type="number" step="0.1" value="\${preset?.rs??''}"></div></td>
-        <td><div class="cell"><input type="number" step="0.1" value="\${preset?.ta??''}"></div></td>
-        <td><div class="cell"><input type="number" step="0.01" value="\${preset?.ph??''}"></div></td>
+        <td><div class="cell"><input placeholder="Lot-namn" value="${preset?.name??''}"></div></td>
+        <td><div class="cell"><input placeholder="Tank" value="${preset?.tank??''}"></div></td>
+        <td><div class="cell"><input type="number" step="1" value="${preset?.vol??''}"></div></td>
+        <td><div class="cell"><input type="number" step="0.01" value="${preset?.alk??''}"></div></td>
+        <td><div class="cell"><input type="number" step="0.1" value="${preset?.rs??''}"></div></td>
+        <td><div class="cell"><input type="number" step="0.1" value="${preset?.ta??''}"></div></td>
+        <td><div class="cell"><input type="number" step="0.01" value="${preset?.ph??''}"></div></td>
       `;
       tr.querySelectorAll('input').forEach(inp=>{
         inp.addEventListener('input', recalc);
