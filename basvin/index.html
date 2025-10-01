@@ -1,29 +1,61 @@
 <!doctype html>
-<html lang='sv'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
+<html lang='sv'>
+<head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'/>
 <title>Basvinkalkylator</title>
 <style>
-:root{ --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB; --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9; --green:#2E7D32; --blue:#64B5F6; --yellow:#FFE082; --mint:#81C784; }
-*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+:root{
+  --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB;
+  --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9;
+  --green:#2E7D32; --blue:#64B5F6; --yellow:#FFE082; --mint:#81C784;
+  --accent:#2563EB;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 h1{font-size:20px;margin:0 0 12px;font-weight:700}
-.container{max-width:1024px;margin:0 auto;padding:16px}
-.grid{display:grid;gap:16px} @media(min-width:860px){ .cols-2{grid-template-columns:1fr 1fr} }
+
+.container{max-width:1160px;margin:0 auto;padding:16px}
+.stack{display:grid;gap:16px}
+.grid{display:grid;gap:16px}
+@media(min-width:1024px){ .cols-2{grid-template-columns:1fr 1fr} }
+
 .card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);padding:16px}
-.card h2{margin:0 0 4px;font-size:14px;font-weight:600} .card .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
-label{display:block;margin:8px 0} .lab{display:block;margin-bottom:4px;color:var(--muted);font-size:12px} .row{display:flex;align-items:center;gap:6px}
+.card h2{margin:0 0 4px;font-size:14px;font-weight:600}
+.card .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
+
+label{display:block;margin:8px 0}
+.lab{display:block;margin-bottom:4px;color:var(--muted);font-size:12px}
+.row{display:flex;align-items:center;gap:6px}
+
 input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;height:32px}
-.input-card input[type=number]{background:var(--input)} .const-card input[type=number]{background:var(--const)}
-.sfx{font-size:12px;color:var(--muted)} .pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:6px 0}
-.dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px} .muted{color:var(--muted);font-size:12px}
-.btn{background:#2563EB;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px} .btn:active{transform:translateY(1px)} .right{display:flex;justify-content:flex-end}
-.chart-wrap{width:100%;height:240px} .legend{display:flex;gap:12px;align-items:center;margin-top:8px;font-size:12px;color:var(--text)}
-.leg-dot{width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:6px} .ld-must{background:var(--mint)} .ld-sugar{background:var(--yellow)} .ld-rs{background:var(--blue)}
-@media print{ .btn, .right{display:none} body{background:#fff} .card{page-break-inside:avoid} }
-.back a{font-size:13px;color:#2563EB;text-decoration:none}
-</style></head>
+.input-card input[type=number]{background:var(--input)}
+.const-card input[type=number]{background:var(--const)}
+
+.sfx{font-size:12px;color:var(--muted)}
+.pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:6px 0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px}
+.muted{color:var(--muted);font-size:12px}
+
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.btn:active{transform:translateY(1px)}
+.right{display:flex;justify-content:flex-end}
+
+.chart-wrap{width:100%;height:240px}
+.legend{display:flex;gap:12px;align-items:center;margin-top:8px;font-size:12px;color:var(--text)}
+.leg-dot{width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:6px}
+.ld-must{background:var(--mint)} .ld-sugar{background:var(--yellow)} .ld-rs{background:var(--blue)}
+
+@media print{ .btn, .right, .back{display:none} body{background:#fff} .card{page-break-inside:avoid} }
+
+.back a{font-size:13px;color:var(--accent);text-decoration:none}
+</style>
+</head>
 <body>
-<div class='container' id='calc-root'>
-  <div class='back' style='margin-bottom:8px'><a href='../'>← Till kalkylatorer</a></div>
+<div class='container stack' id='calc-root'>
+  <div class='back'><a href='../'>← Till kalkylatorer</a></div>
   <header><h1>Basvinkalkylator</h1></header>
+
   <div class='grid cols-2'>
     <div class='card input-card'>
       <h2>Input</h2><p class='sub'>Det du fyller i</p>
@@ -41,6 +73,7 @@ input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--border);bor
       <label><span class='lab'>Tryckfaktor (bar per g/L jäsbart socker)</span><span class='row'><input id='pressureFactor' type='number' step='0.01'/></span></label>
     </div>
   </div>
+
   <div class='grid cols-2'>
     <div class='card'>
       <h2>Resultat</h2><p class='sub'>Uträknade värden</p>
@@ -60,8 +93,10 @@ input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--border);bor
       </div>
     </div>
   </div>
-  <div class='right' style='margin-top:8px'><button class='btn' onclick='window.print()'>Skriv ut / Spara som PDF</button></div>
+
+  <div class='right'><button class='btn' onclick='window.print()'>Skriv ut / Spara som PDF</button></div>
 </div>
+
 <script>
 const el = (id)=>document.getElementById(id);
 const inputs = { V: el('V'), A0: el('A0'), Rv: el('Rv'), Sm: el('Sm'), St: el('St'), Af: el('Af'), gPerPct: el('gPerPct'), rho: el('rho'), pressureFactor: el('pressureFactor') };
@@ -79,9 +114,10 @@ function update(){
   const out = compute(V,A0,Rv,Sm,St,Af,gPerPct,rho); el('T').textContent = isFinite(out.T)? out.T.toFixed(2): '–'; el('M').textContent = isFinite(out.M)? out.M.toFixed(2): '–'; el('S').textContent = isFinite(out.S)? Math.round(out.S).toString(): '–';
   const sugarFromMustPerL = (out.M * Sm) / out.T; const sugarFromSugarPerL = out.S / out.T; const rsFromWinePerL = (V * Rv) / out.T; const fermentableSugarPerL = sugarFromMustPerL + sugarFromSugarPerL + rsFromWinePerL; document.getElementById('P').textContent = (pressureFactor * fermentableSugarPerL).toFixed(2);
   drawBars([{ key:"Must", value: sugarFromMustPerL, color: "#81C784" }, { key:"Socker", value: sugarFromSugarPerL, color: "#FFE082" }, { key:"RS vin", value: rsFromWinePerL, color: "#64B5F6" }], Math.max(St, fermentableSugarPerL));
+  const feas = document.getElementById('feasible'); feas.textContent = out.feasible ? "" : "OBS: Kombinationen av värden verkar omöjlig – justera Sm/A0/St/Af.";
 }
 function drawBars(data, maxY){ const svg = document.getElementById('chart'); const W = svg.clientWidth || 600, H = svg.clientHeight || 240; while (svg.firstChild) svg.removeChild(svg.firstChild);
-  const padding = {left: 38, right: 10, top: 10, bottom: 28}; const innerW = W - padding.left - padding.right; const innerH = H - padding.top - padding.bottom; const ticks = 5;
+  const padding = {left: 35, right: 10, top: 10, bottom: 28}; const innerW = W - padding.left - padding.right; const innerH = H - padding.top - padding.bottom; const ticks = 5;
   for(let i=0;i<=ticks;i++){ const yVal = (maxY/ticks)*i; const y = H - padding.bottom - (yVal/maxY)*innerH; const line = document.createElementNS(svg.namespaceURI,"line"); line.setAttribute("x1", padding.left); line.setAttribute("x2", W - padding.right); line.setAttribute("y1", y); line.setAttribute("y2", y); line.setAttribute("stroke", "#EEE"); svg.appendChild(line);
     const txt = document.createElementNS(svg.namespaceURI,"text"); txt.setAttribute("x", padding.left - 6); txt.setAttribute("y", y + 4); txt.setAttribute("text-anchor","end"); txt.setAttribute("font-size","11"); txt.setAttribute("fill","#6B7280"); txt.textContent = maxY ? yVal.toFixed(0) : "0"; svg.appendChild(txt); }
   const barW = innerW / (data.length*1.6); const gap = barW * 0.6; data.forEach((d, i)=>{ const x = padding.left + i*(barW+gap) + gap*0.5; const h = maxY ? Math.max(0,(d.value/maxY)*innerH) : 0; const y = H - padding.bottom - h;
@@ -90,4 +126,5 @@ function drawBars(data, maxY){ const svg = document.getElementById('chart'); con
     const cat = document.createElementNS(svg.namespaceURI,"text"); cat.setAttribute("x", x + barW/2); cat.setAttribute("y", H - 8); cat.setAttribute("text-anchor","middle"); cat.setAttribute("font-size","11"); cat.setAttribute("fill","#6B7280"); cat.textContent = d.key; svg.appendChild(cat); }); }
 Object.values(inputs).forEach(inp=>{ inp.addEventListener('input', update); inp.addEventListener('change', update); }); update(); let rAF; window.addEventListener('resize', ()=>{ cancelAnimationFrame(rAF); rAF=requestAnimationFrame(update); });
 </script>
-</body></html>
+</body>
+</html>
