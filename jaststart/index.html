@@ -41,6 +41,17 @@
     .card ul{list-style:none;padding-left:0;margin:0}
     .card ul li{display:flex;align-items:center;gap:8px}
     .back a{color:#2563EB;text-decoration:none}
+    /* Print & PDF */
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      .no-print{ display:none !important; }
+      .pagebreak{ break-before: page; }
+      .card{ page-break-inside: avoid; }
+      body{ background:#fff; }
+    }
+    /* Buttons */
+    .btn{ appearance:none; border:1px solid var(--border); background:var(--accent); color:#fff; padding:8px 12px; border-radius:8px; font-size:14px; cursor:pointer }
+    .btn.alt{ background:#fff; color:var(--text) }
   </style>
 </head>
 <body>
@@ -102,8 +113,9 @@
       </div>
     </div>
 
+    <!-- Steg-för-steg manual -->
     <div class="stack">
-      <div class="card">
+      <div class="card pagebreak">
         <h2>Steg 1 – Återfuktning <span class="muted" id="s1_when"></span></h2>
         <p class="sub">Tid: 20–30 min</p>
         <ul class="chklist">
@@ -148,7 +160,7 @@
         </ul>
       </div>
 
-      <div class="card">
+      <div class="card pagebreak">
         <h2>Journal – Mätningar & luftning</h2>
         <p class="sub">Förifyllt schema från start (−3 dagar) till buteljeringsdag.</p>
         <table>
@@ -165,6 +177,12 @@
         </table>
       </div>
     </div>
+
+    <!-- Actions -->
+    <div class="card no-print" style="display:flex; justify-content:flex-end; gap:8px">
+      <button class="btn alt" onclick="window.print()">Skriv ut</button>
+      <button class="btn" onclick="window.print()">Spara till PDF</button>
+    </div>
   </div>
 
   <script>
@@ -173,17 +191,23 @@
       const fmt0=(n)=>Number.isFinite(n)?n.toFixed(0):'–';
       const fmt1=(n)=>Number.isFinite(n)?n.toFixed(1):'–';
 
+      // Inputs
       const V=$('V'), bottling=$('bottling');
       const doseYeast=$('doseYeast'), doseOrgN=$('doseOrgN'), doseInorgN=$('doseInorgN');
       const rehydYeast=$('rehydYeast'), rehydOrgN=$('rehydOrgN'), levurPct=$('levurPct');
       const brandYeast=$('brandYeast'), brandOrgN=$('brandOrgN'), brandInorgN=$('brandInorgN');
 
+      // Labels (results)
       const labelYeast=$('labelYeast'), labelOrgN=$('labelOrgN'), labelInorgN=$('labelInorgN');
+
+      // Outputs (results)
       const outStarterL=$('outStarterL'), outYeastLine=$('outYeastLine'), outOrgNLine=$('outOrgNLine'), outInorgNLine=$('outInorgNLine');
       const outVin2=$('outVin2'), outVin3=$('outVin3');
 
+      // Manual brand spans
       const s1_orgn_brand=$('s1_orgn_brand'), s1_yeast_brand=$('s1_yeast_brand'), s2_dap_brand=$('s2_dap_brand');
 
+      // Manual quantities
       const s1_when=$('s1_when'), s2_when=$('s2_when'), s3_when=$('s3_when');
       const s1_orgn=$('s1_orgn'), s1_yeast=$('s1_yeast'), s1_water=$('s1_water');
       const s2_totalmix=$('s2_totalmix'), s2_dap=$('s2_dap'), s2_vin=$('s2_vin'), s2_water=$('s2_water'), s2_sugar=$('s2_sugar');
@@ -221,18 +245,17 @@
           tdD.appendChild(iD);
           const tdT=document.createElement('td');
           const iT=document.createElement('input'); iT.type='number'; iT.step='0.1'; iT.placeholder='—'; iT.style.width='100%';
-          iT.addEventListener('keydown',(e)=>{ if((e.key==='ArrowUp'||e.key==='ArrowDown')&&(iT.value===''||iT.value==null)){ iT.value='20'; e.preventDefault(); }});
+          iT.addEventListener('keydown',(e)=>{ if((e.key==='ArrowUp'||e.key==='Down')&&(iT.value===''||iT.value==null)){ iT.value='20'; e.preventDefault(); }});
           tdT.appendChild(iT);
           const tdO=document.createElement('td');
           const cb=document.createElement('input'); cb.type='checkbox'; tdO.appendChild(cb);
           tr.appendChild(tdD); tr.appendChild(tdT); tr.appendChild(tdO);
           logBody.appendChild(tr);
         };
-
-        // Dag -2 till dagen före: 08:00 & 16:00
-        for(let day=new Date(base.getFullYear(),base.getMonth(),base.getDate()+1);
-            day < new Date(d.getFullYear(),d.getMonth(),d.getDate());
-            day.setDate(day.getDate()+1)){
+        // Dag -3: 16:00
+        addRow(base,16,0);
+        // Dag -2 till dagen före buteljering: 08:00 & 16:00 per dag
+        for(let day=new Date(base.getFullYear(),base.getMonth(),base.getDate()+1); day < new Date(d.getFullYear(),d.getMonth(),d.getDate()); day.setDate(day.getDate()+1)){
           addRow(new Date(day),8,0);
           addRow(new Date(day),16,0);
         }
@@ -242,7 +265,7 @@
 
       function recalc(){
         const volL=Number(V.value)||0;
-        const starterL=volL*(Number(levurPct.value)||0)/100;
+        const starterL=volL*(Number(levurPct.value)||0)/100; // info
         const yeastG=totalFromDose(doseYeast.value,volL);
         const orgNG=totalFromDose(doseOrgN.value,volL);
         const waterYeast=yeastG*(Number(rehydYeast.value)||0)/1000;
@@ -250,45 +273,52 @@
         const totalWater1=waterYeast+waterOrgN;
         const totalMixL=(yeastG+orgNG)/1000+totalWater1;
 
-        const vin2=volL*0.001;
-        const water2=volL*0.002;
-        const sugar2Kg=volL*0.0005;
-        const sugar2Vol=0.63*sugar2Kg;
+        // Steg 2 proportioner
+        const vin2=volL*0.001; // 0,1%
+        const water2=volL*0.002; // 0,2%
+        const sugar2Kg=volL*0.0005; // 0,05%
+        const sugar2Vol=0.63*sugar2Kg; // L
 
-        const starterVolL=totalMixL+vin2+water2;
+        // Inorganisk näring på jäststartens volym (exkl. sockrets volym)
+        const starterVolL=totalMixL+vin2+water2; 
         const inorgCultureG=(Number(doseInorgN.value)||0)*(starterVolL/100);
 
-        outStarterL.textContent=(Number.isFinite(starterL)?starterL.toFixed(1):'–');
-        outYeastLine.textContent=`${Number.isFinite(yeastG)?yeastG.toFixed(0):'–'} g`;
-        outOrgNLine.textContent=`${Number.isFinite(orgNG)?orgNG.toFixed(0):'–'} g`;
-        outInorgNLine.textContent=`${Number.isFinite(inorgCultureG)?inorgCultureG.toFixed(0):'–'} g`;
-        outVin2.textContent=(Number.isFinite(vin2)?vin2.toFixed(1):'–');
-        outVin3.textContent=(Number.isFinite(0.0158*volL)?(0.0158*volL).toFixed(1):'–');
+        // Resultat – KPI
+        outStarterL.textContent=fmt1(starterL);
+        outYeastLine.textContent=`${fmt0(yeastG)} g`;
+        outOrgNLine.textContent=`${fmt0(orgNG)} g`;
+        outInorgNLine.textContent=`${fmt0(inorgCultureG)} g`;
+        outVin2.textContent=fmt1(vin2);
+        outVin3.textContent=fmt1(0.0158*volL);
 
-        s1_orgn.textContent=`${Number.isFinite(orgNG)?orgNG.toFixed(0):'–'} g`;
-        s1_yeast.textContent=`${Number.isFinite(yeastG)?yeastG.toFixed(0):'–'} g`;
-        s1_water.textContent=(Number.isFinite(totalWater1)?totalWater1.toFixed(1):'–');
+        // Manual – steg 1
+        s1_orgn.textContent=`${fmt0(orgNG)} g`;
+        s1_yeast.textContent=`${fmt0(yeastG)} g`;
+        s1_water.textContent=fmt1(totalWater1);
 
-        s2_totalmix.textContent=(Number.isFinite(totalMixL)?totalMixL.toFixed(1):'–');
-        s2_dap.textContent=`${Number.isFinite(inorgCultureG)?inorgCultureG.toFixed(0):'–'} g`;
-        s2_vin.textContent=(Number.isFinite(vin2)?vin2.toFixed(1):'–');
-        s2_water.textContent=(Number.isFinite(water2)?water2.toFixed(1):'–');
-        s2_sugar.textContent=(Number.isFinite(sugar2Kg)?sugar2Kg.toFixed(1):'–');
+        // Manual – steg 2
+        s2_totalmix.textContent=fmt1(totalMixL);
+        s2_dap.textContent=`${fmt0(inorgCultureG)} g`;
+        s2_vin.textContent=fmt1(vin2);
+        s2_water.textContent=fmt1(water2);
+        s2_sugar.textContent=fmt1(sugar2Kg);
 
-        const msugar_total=0.0031*volL;
-        const mvin_total=0.0158*volL;
-        const mwater_total=0.0122*volL;
-        const total_target=mvin_total+mwater_total+0.63*msugar_total;
-        const preblendVol=totalMixL+vin2+water2+sugar2Vol;
-        const sugar_need_raw=Math.max(0,msugar_total-sugar2Kg);
-        const vin_need_raw=Math.max(0,mvin_total-vin2);
-        const water_need_raw=Math.max(0,mwater_total-water2);
-        s3_preblend.textContent=(Number.isFinite(preblendVol)?preblendVol.toFixed(1):'–');
-        s3_total_target.textContent=(Number.isFinite(total_target)?total_target.toFixed(1):'–');
-        s3_sugar_add.textContent=(Number.isFinite(sugar_need_raw)?sugar_need_raw.toFixed(1):'–');
-        s3_vin_add.textContent=(Number.isFinite(vin_need_raw)?vin_need_raw.toFixed(1):'–');
-        s3_water_add.textContent=(Number.isFinite(water_need_raw)?water_need_raw.toFixed(1):'–');
+        // Manual – steg 3 totals och tillsats
+        const msugar_total=0.0031*volL;        // kg
+        const mvin_total=0.0158*volL;         // L
+        const mwater_total=0.0122*volL;       // L
+        const total_target=mvin_total+mwater_total+0.63*msugar_total; // L
+        const preblendVol=totalMixL+vin2+water2+sugar2Vol; // allt från steg 1+2
+        const sugar_need_raw=Math.max(0,msugar_total-sugar2Kg); // kg
+        const vin_need_raw=Math.max(0,mvin_total-vin2);         // L
+        const water_need_raw=Math.max(0,mwater_total-water2);   // L
+        s3_preblend.textContent=fmt1(preblendVol);
+        s3_total_target.textContent=fmt1(total_target);
+        s3_sugar_add.textContent=fmt1(sugar_need_raw);
+        s3_vin_add.textContent=fmt1(vin_need_raw);
+        s3_water_add.textContent=fmt1(water_need_raw);
 
+        // Tider och logg
         const d=bottling.value?new Date(bottling.value):new Date();
         const base=new Date(d.getFullYear(),d.getMonth(),d.getDate()-3);
         const fmtDateTime=(date,h,m)=>{ const x=new Date(date.getFullYear(),date.getMonth(),date.getDate(),h,m); return `${x.toLocaleDateString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit'})} ${x.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})}`; };
@@ -299,16 +329,15 @@
         buildLog();
       }
 
+      // Reagera på alla ändringar
       [V,bottling,doseYeast,doseOrgN,doseInorgN,rehydYeast,rehydOrgN,levurPct].forEach(el=>{ el.addEventListener('input',recalc); el.addEventListener('change',recalc); });
       [brandYeast,brandOrgN,brandInorgN].forEach(el=>{ el.addEventListener('input',setLabels); el.addEventListener('change',setLabels); });
 
       setLabels();
-      if(!bottling.value){ const t=new Date(); bottling.value=t.toISOString().slice(0,10); }
+      if(!bottling.value){
+        const t=new Date(); bottling.value=t.toISOString().slice(0,10);
+      }
       recalc();
-    });
-  </script>
-</body>
-</html>
     });
   </script>
 </body>
