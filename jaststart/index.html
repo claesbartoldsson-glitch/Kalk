@@ -3,313 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jäststart till andrajäsning</title>
+  <title>Ästad – Kalkylatorer</title>
   <style>
-    :root{
-      --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB;
-      --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9;
-      --green:#2E7D32; --accent:#2563EB; --danger:#B91C1C;
-    }
+    :root{ --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB; --accent:#2563EB; }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    h1{font-size:20px;margin:0 0 12px;font-weight:700}
-    h2{margin:0 0 4px;font-size:14px;font-weight:600}
-    .container{max-width:1160px;margin:0 auto;padding:16px}
-    .stack{display:grid;gap:16px}
+    .container{max-width:1160px;margin:0 auto;padding:24px}
+    h1{font-size:22px;margin:0 0 16px;font-weight:700}
+    .muted{color:var(--muted)}
     .grid{display:grid;gap:16px}
-    @media(min-width:1024px){ .cols-2{grid-template-columns:1fr 1fr} }
-    .card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);padding:16px}
-    .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
-    label{display:block;margin:0}
-    .lab{display:block;margin-bottom:2px;color:var(--muted);font-size:12px}
-    .row{display:flex;align-items:center;gap:6px}
-    input[type=number], input[type=text], input[type=date], select{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;height:30px}
-    .input-card input, .input-card select{background:var(--input)}
-    .const-card input{background:var(--const)}
-    .output-pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:4px 0}
-    .dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px}
-    .muted{color:var(--muted);font-size:12px}
-    .chem-grid{display:grid;grid-template-columns: 1fr 1fr 1fr 1fr;gap:6px;align-items:center;margin:6px 0}
-    .chem-grid .name{font-size:13px;color:#374151}
-    .chklist{list-style:none;padding-left:0;margin:0}
-    .chk{display:flex;align-items:center;gap:8px;margin:4px 0}
-    .chk input{width:16px;height:16px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border:1px solid var(--border);padding:8px;font-size:13px}
-    th{background:#f9fafb;text-align:left}
-    td input[type=number]{background:#fff;height:28px}
-    .card ul{list-style:none;padding-left:0;margin:0}
-    .card ul li{display:flex;align-items:center;gap:8px}
-    .back a{color:#2563EB;text-decoration:none}
+    @media(min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);padding:16px;display:flex;flex-direction:column;gap:8px}
+    .card h2{margin:0;font-size:16px}
+    .card p{margin:0;color:var(--muted)}
+    .card a{margin-top:auto;display:inline-block;padding:8px 10px;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:#fff;background:var(--accent)}
+    .footer{margin-top:24px;color:var(--muted);font-size:12px}
   </style>
 </head>
 <body>
-  <div class="container stack" id="root">
-    <div class="back"><a href="../index.html">← Till kalkylatorer</a></div>
-    <header><h1>Jäststart till andrajäsning</h1></header>
-
-    <div class="grid cols-2">
-      <div class="card input-card">
-        <h2>Indata</h2>
-        <div class="grid" style="grid-template-columns:1fr;gap:4px">
-          <label><span class="lab">Mängd vin</span><span class="row"><input id="V" type="number" step="1" value="2000"/><span class="muted">L</span></span></label>
-          <label><span class="lab">Vin namn</span><input id="wineName" type="text" placeholder="Förstavin 2024"/></label>
-          <label><span class="lab">Vin LOT</span><input id="wineLot" type="text" placeholder="2401"/></label>
-          <label><span class="lab">Buteljering</span><input id="bottling" type="date"/></label>
-        </div>
+  <div class="container">
+    <h1>Ästad – Kalkylatorer</h1>
+    <p class="muted" style="margin-bottom:16px">Snabb åtkomst till verktyg för basvin, blend och jäststart.</p>
+    <div class="grid">
+      <div class="card">
+        <h2>Basvinkalkylator</h2>
+        <p>Dosering av socker och must, målalkohol och volym.</p>
+        <a href="basvin/index.html">Öppna</a>
       </div>
-
-      <div class="card const-card">
-        <h2>Proceshjälpmedel & dosering</h2>
-        <p class="sub">Fabrikat, dosering och rehydreringsvolym</p>
-        <div class="chem-grid">
-          <div class="name">Jäst</div>
-          <input id="brandYeast" type="text" value="DV10"/>
-          <span class="row"><input id="doseYeast" type="number" step="0.1" value="10"/><span class="muted">g/hL</span></span>
-          <span class="row"><input id="rehydYeast" type="number" step="1" value="5"/><span class="muted">× vikt i vatten</span></span>
-        </div>
-        <div class="chem-grid">
-          <div class="name">Organisk näring</div>
-          <input id="brandOrgN" type="text" value="Start Y SP"/>
-          <span class="row"><input id="doseOrgN" type="number" step="0.1" value="10"/><span class="muted">g/hL</span></span>
-          <span class="row"><input id="rehydOrgN" type="number" step="1" value="5"/><span class="muted">× vikt i vatten</span></span>
-        </div>
-        <div class="chem-grid">
-          <div class="name">Inorganisk näring</div>
-          <input id="brandInorgN" type="text" value="Phosphate Compose"/>
-          <span class="row"><input id="doseInorgN" type="number" step="0.1" value="30"/><span class="muted">g/hL av jäststart</span></span>
-          <div></div>
-        </div>
-        <div class="chem-grid">
-          <div class="name">Mängd jäststart</div>
-          <div></div>
-          <span class="row"><input id="levurPct" type="number" step="0.1" value="3" style="max-width:80px"/><span class="muted">%</span></span>
-          <div></div>
-        </div>
+      <div class="card">
+        <h2>Blendkalkylator</h2>
+        <p>Lot-baserad blend, analyser och recept.</p>
+        <a href="blend/index.html">Öppna</a>
+      </div>
+      <div class="card">
+        <h2>Jäststart till andrajäsning</h2>
+        <p>Interaktiv manual och uträkningar.</p>
+        <a href="jaststart/index.html">Öppna</a>
       </div>
     </div>
-
-    <div class="grid cols-2">
-      <div class="card">
-        <h2>Resultat</h2>
-        <p class="sub">Uträknade värden</p>
-        <div class="output-pill"><span class="muted">Mängd jäststart</span><span class="kpi"><span class="dot"></span><b id="outStarterL">–</b> L</span></div>
-        <div class="output-pill"><span class="muted" id="labelYeast">Jäst – DV10</span><span class="kpi"><span class="dot"></span><b id="outYeastLine">–</b></span></div>
-        <div class="output-pill"><span class="muted" id="labelOrgN">Organisk näring – Start Y SP</span><span class="kpi"><span class="dot"></span><b id="outOrgNLine">–</b></span></div>
-        <div class="output-pill"><span class="muted" id="labelInorgN">Inorganisk näring – Phosphate Compose</span><span class="kpi"><span class="dot"></span><b id="outInorgNLine">–</b></span></div>
-        <div class="output-pill"><span class="muted">Vin till steg 2</span><span class="kpi"><span class="dot"></span><b id="outVin2">–</b> L</span></div>
-        <div class="output-pill"><span class="muted">Vin till steg 3</span><span class="kpi"><span class="dot"></span><b id="outVin3">–</b> L</span></div>
-      </div>
-    </div>
-
-    <div class="stack">
-      <div class="card">
-        <h2>Steg 1 – Återfuktning <span class="muted" id="s1_when"></span></h2>
-        <p class="sub">Tid: 20–30 min</p>
-        <ul class="chklist">
-          <li class="chk"><input type="checkbox"/> <span><b id="s1_orgn"></b> <span id="s1_orgn_brand">Start Y SP</span></span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s1_yeast"></b> <span id="s1_yeast_brand">DV10</span></span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s1_water"></b> L vatten (35–38 °C)</span></li>
-        </ul>
-        <p>Blanda väl i början av återfuktningen och igen innan nästa steg.</p>
-      </div>
-
-      <div class="card">
-        <h2>Steg 2 – Acklimatisering <span class="muted" id="s2_when"></span></h2>
-        <p class="sub">Tid: 6–12 timmar</p>
-        <p>Blanda:</p>
-        <ul class="chklist">
-          <li class="chk"><input type="checkbox"/> <span><b id="s2_totalmix"></b> L återfuktad jäst (allt från steg 1)</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s2_sugar"></b> kg socker</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s2_vin"></b> L basvin (17 °C)</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s2_water"></b> L vatten (17 °C)</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s2_dap"></b> g DAP (<span id="s2_dap_brand">Phosphate Compose</span>)</span></li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h2>Steg 3 – Utveckling <span class="muted" id="s3_when"></span></h2>
-        <p class="sub">Tid: ≈ 3 dagar</p>
-        <p>Blanda:</p>
-        <ul class="chklist">
-          <li class="chk"><input type="checkbox"/> <span><b id="s3_preblend"></b> L (redan blandad från steg 2)</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s3_sugar_add"></b> kg socker</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s3_vin_add"></b> L basvin (17 °C)</span></li>
-          <li class="chk"><input type="checkbox"/> <span><b id="s3_water_add"></b> L vatten (17 °C)</span></li>
-        </ul>
-        <p class="muted">Målsatt startervolym ≈ <b id="s3_total_target"></b> L (inkl. sockrets volym ~0,63 L/kg).</p>
-        <div class="sub" style="margin-top:8px">Vägledning under utveckling:</div>
-        <ul style="margin:6px 0 0 0; padding-left:18px; list-style:disc">
-          <li><b>Mät densitet</b> – se till att den inte går under <b>996</b>.</li>
-          <li>Om kulturen är för aktiv och densiteten sjunker för snabbt: tillsätt <b>socker</b> och <b>4× vikten i vatten</b>.</li>
-          <li>Om kulturen går för långsamt: <b>höj temperaturen</b>.</li>
-          <li>Fram till densiteten når ca <b>1000</b> vid <b>20 °C</b>: <b>lufta 2× dagligen</b>.</li>
-          <li>Fram till densiteten når <b>996–998</b>: sänk temperaturen gradvis till <b>16 °C</b> och fortsätt lufta.</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h2>Journal – Mätningar & luftning</h2>
-        <p class="sub">Förifyllt schema från start (−3 dagar) till buteljeringsdag.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Datum</th>
-              <th>Tid</th>
-              <th>Densitet</th>
-              <th>Temperatur (°C)</th>
-              <th>Syregiva <span class="muted">(10 mg/hL)</span></th>
-            </tr>
-          </thead>
-          <tbody id="logBody"></tbody>
-        </table>
-      </div>
-    </div>
+    <div class="footer">© Ästad Vingård</div>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const $=(id)=>document.getElementById(id);
-      const fmt0=(n)=>Number.isFinite(n)?n.toFixed(0):'–';
-      const fmt1=(n)=>Number.isFinite(n)?n.toFixed(1):'–';
-
-      const V=$('V'), bottling=$('bottling');
-      const doseYeast=$('doseYeast'), doseOrgN=$('doseOrgN'), doseInorgN=$('doseInorgN');
-      const rehydYeast=$('rehydYeast'), rehydOrgN=$('rehydOrgN'), levurPct=$('levurPct');
-      const brandYeast=$('brandYeast'), brandOrgN=$('brandOrgN'), brandInorgN=$('brandInorgN');
-
-      const labelYeast=$('labelYeast'), labelOrgN=$('labelOrgN'), labelInorgN=$('labelInorgN');
-      const outStarterL=$('outStarterL'), outYeastLine=$('outYeastLine'), outOrgNLine=$('outOrgNLine'), outInorgNLine=$('outInorgNLine');
-      const outVin2=$('outVin2'), outVin3=$('outVin3');
-
-      const s1_orgn_brand=$('s1_orgn_brand'), s1_yeast_brand=$('s1_yeast_brand'), s2_dap_brand=$('s2_dap_brand');
-
-      const s1_when=$('s1_when'), s2_when=$('s2_when'), s3_when=$('s3_when');
-      const s1_orgn=$('s1_orgn'), s1_yeast=$('s1_yeast'), s1_water=$('s1_water');
-      const s2_totalmix=$('s2_totalmix'), s2_dap=$('s2_dap'), s2_vin=$('s2_vin'), s2_water=$('s2_water'), s2_sugar=$('s2_sugar');
-      const s3_preblend=$('s3_preblend'), s3_sugar_add=$('s3_sugar_add'), s3_vin_add=$('s3_vin_add'), s3_water_add=$('s3_water_add'), s3_total_target=$('s3_total_target');
-
-      const logBody=$('logBody');
-
-      function totalFromDose(dose_gPerhL, vol_L){return (Number(dose_gPerhL)||0)*(vol_L/100);}  
-
-      function setLabels(){
-        const by=brandYeast.value||'DV10';
-        const bo=brandOrgN.value||'Start Y SP';
-        const bi=brandInorgN.value||'Phosphate Compose';
-        labelYeast.textContent = `Jäst – ${by}`;
-        labelOrgN.textContent = `Organisk näring – ${bo}`;
-        labelInorgN.textContent = `Inorganisk näring – ${bi}`;
-        s1_orgn_brand.textContent = bo;
-        s1_yeast_brand.textContent = by;
-        s2_dap_brand.textContent = bi;
-      }
-
-      function buildLog(){
-        logBody.innerHTML='';
-        const d=bottling.value?new Date(bottling.value):new Date();
-        const base=new Date(d.getFullYear(),d.getMonth(),d.getDate()-3);
-        const addRow=(date,hour,minute)=>{
-          const dt=new Date(date.getFullYear(),date.getMonth(),date.getDate(),hour,minute);
-          const tr=document.createElement('tr');
-          const c=(t)=>{const td=document.createElement('td'); td.textContent=t; return td;};
-          tr.appendChild(c(dt.toLocaleDateString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit'})));
-          tr.appendChild(c(dt.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})));
-          const tdD=document.createElement('td');
-          const iD=document.createElement('input'); iD.type='number'; iD.step='1'; iD.placeholder='—'; iD.style.width='100%';
-          iD.addEventListener('keydown',(e)=>{ if((e.key==='ArrowUp'||e.key==='ArrowDown')&&(iD.value===''||iD.value==null)){ iD.value='1000'; e.preventDefault(); }});
-          tdD.appendChild(iD);
-          const tdT=document.createElement('td');
-          const iT=document.createElement('input'); iT.type='number'; iT.step='0.1'; iT.placeholder='—'; iT.style.width='100%';
-          iT.addEventListener('keydown',(e)=>{ if((e.key==='ArrowUp'||e.key==='ArrowDown')&&(iT.value===''||iT.value==null)){ iT.value='20'; e.preventDefault(); }});
-          tdT.appendChild(iT);
-          const tdO=document.createElement('td');
-          const cb=document.createElement('input'); cb.type='checkbox'; tdO.appendChild(cb);
-          tr.appendChild(tdD); tr.appendChild(tdT); tr.appendChild(tdO);
-          logBody.appendChild(tr);
-        };
-
-        // Dag -2 till dagen före: 08:00 & 16:00
-        for(let day=new Date(base.getFullYear(),base.getMonth(),base.getDate()+1);
-            day < new Date(d.getFullYear(),d.getMonth(),d.getDate());
-            day.setDate(day.getDate()+1)){
-          addRow(new Date(day),8,0);
-          addRow(new Date(day),16,0);
-        }
-        // Buteljeringsdag 07:00
-        addRow(new Date(d.getFullYear(),d.getMonth(),d.getDate()),7,0);
-      }
-
-      function recalc(){
-        const volL=Number(V.value)||0;
-        const starterL=volL*(Number(levurPct.value)||0)/100;
-        const yeastG=totalFromDose(doseYeast.value,volL);
-        const orgNG=totalFromDose(doseOrgN.value,volL);
-        const waterYeast=yeastG*(Number(rehydYeast.value)||0)/1000;
-        const waterOrgN=orgNG*(Number(rehydOrgN.value)||0)/1000;
-        const totalWater1=waterYeast+waterOrgN;
-        const totalMixL=(yeastG+orgNG)/1000+totalWater1;
-
-        const vin2=volL*0.001;
-        const water2=volL*0.002;
-        const sugar2Kg=volL*0.0005;
-        const sugar2Vol=0.63*sugar2Kg;
-
-        const starterVolL=totalMixL+vin2+water2;
-        const inorgCultureG=(Number(doseInorgN.value)||0)*(starterVolL/100);
-
-        outStarterL.textContent=(Number.isFinite(starterL)?starterL.toFixed(1):'–');
-        outYeastLine.textContent=`${Number.isFinite(yeastG)?yeastG.toFixed(0):'–'} g`;
-        outOrgNLine.textContent=`${Number.isFinite(orgNG)?orgNG.toFixed(0):'–'} g`;
-        outInorgNLine.textContent=`${Number.isFinite(inorgCultureG)?inorgCultureG.toFixed(0):'–'} g`;
-        outVin2.textContent=(Number.isFinite(vin2)?vin2.toFixed(1):'–');
-        outVin3.textContent=(Number.isFinite(0.0158*volL)?(0.0158*volL).toFixed(1):'–');
-
-        s1_orgn.textContent=`${Number.isFinite(orgNG)?orgNG.toFixed(0):'–'} g`;
-        s1_yeast.textContent=`${Number.isFinite(yeastG)?yeastG.toFixed(0):'–'} g`;
-        s1_water.textContent=(Number.isFinite(totalWater1)?totalWater1.toFixed(1):'–');
-
-        s2_totalmix.textContent=(Number.isFinite(totalMixL)?totalMixL.toFixed(1):'–');
-        s2_dap.textContent=`${Number.isFinite(inorgCultureG)?inorgCultureG.toFixed(0):'–'} g`;
-        s2_vin.textContent=(Number.isFinite(vin2)?vin2.toFixed(1):'–');
-        s2_water.textContent=(Number.isFinite(water2)?water2.toFixed(1):'–');
-        s2_sugar.textContent=(Number.isFinite(sugar2Kg)?sugar2Kg.toFixed(1):'–');
-
-        const msugar_total=0.0031*volL;
-        const mvin_total=0.0158*volL;
-        const mwater_total=0.0122*volL;
-        const total_target=mvin_total+mwater_total+0.63*msugar_total;
-        const preblendVol=totalMixL+vin2+water2+sugar2Vol;
-        const sugar_need_raw=Math.max(0,msugar_total-sugar2Kg);
-        const vin_need_raw=Math.max(0,mvin_total-vin2);
-        const water_need_raw=Math.max(0,mwater_total-water2);
-        s3_preblend.textContent=(Number.isFinite(preblendVol)?preblendVol.toFixed(1):'–');
-        s3_total_target.textContent=(Number.isFinite(total_target)?total_target.toFixed(1):'–');
-        s3_sugar_add.textContent=(Number.isFinite(sugar_need_raw)?sugar_need_raw.toFixed(1):'–');
-        s3_vin_add.textContent=(Number.isFinite(vin_need_raw)?vin_need_raw.toFixed(1):'–');
-        s3_water_add.textContent=(Number.isFinite(water_need_raw)?water_need_raw.toFixed(1):'–');
-
-        const d=bottling.value?new Date(bottling.value):new Date();
-        const base=new Date(d.getFullYear(),d.getMonth(),d.getDate()-3);
-        const fmtDateTime=(date,h,m)=>{ const x=new Date(date.getFullYear(),date.getMonth(),date.getDate(),h,m); return `${x.toLocaleDateString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit'})} ${x.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})}`; };
-        s1_when.textContent=fmtDateTime(base,8,0);
-        s2_when.textContent=fmtDateTime(base,8,30);
-        s3_when.textContent=fmtDateTime(base,16,0);
-
-        buildLog();
-      }
-
-      [V,bottling,doseYeast,doseOrgN,doseInorgN,rehydYeast,rehydOrgN,levurPct].forEach(el=>{ el.addEventListener('input',recalc); el.addEventListener('change',recalc); });
-      [brandYeast,brandOrgN,brandInorgN].forEach(el=>{ el.addEventListener('input',setLabels); el.addEventListener('change',setLabels); });
-
-      setLabels();
-      if(!bottling.value){ const t=new Date(); bottling.value=t.toISOString().slice(0,10); }
-      recalc();
-    });
-  </script>
-</body>
-</html>
-    });
-  </script>
 </body>
 </html>
