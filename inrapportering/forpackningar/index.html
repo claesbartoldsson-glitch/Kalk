@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inrapportering – Förpackningar</title>
+  <style>
+    :root{
+      --bg:#F6F7FB; --text:#111827; --muted:#6B7280; --border:#E5E7EB;
+      --input:#E3F2FD; --const:#F5F5F5; --output:#E8F5E9;
+      --green:#2E7D32; --accent:#2563EB; --danger:#B91C1C;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    h1{font-size:20px;margin:0 0 12px;font-weight:700}
+    h2{margin:0 0 4px;font-size:14px;font-weight:600}
+    .container{max-width:1160px;margin:0 auto;padding:16px}
+    .stack{display:grid;gap:16px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:1024px){ .cols-2{grid-template-columns:1fr 1fr} }
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);padding:16px}
+    .sub{margin:0 0 12px;color:var(--muted);font-size:12px}
+    label{display:block;margin:0}
+    .lab{display:block;margin-bottom:2px;color:var(--muted);font-size:12px}
+    .row{display:flex;align-items:center;gap:6px}
+    input[type=number], input[type=text], input[type=date]{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;height:30px}
+    .input-card input{background:var(--input)}
+    .const-card input{background:var(--const)}
+    .output-pill{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--output);margin:4px 0}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--green);margin-right:6px}
+    .muted{color:var(--muted);font-size:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid var(--border);padding:8px;font-size:13px;text-align:left}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .back a{color:#2563EB;text-decoration:none}
+    /* Print & PDF */
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      .no-print{ display:none !important; }
+      .pagebreak{ break-before: page; }
+      .card{ page-break-inside: avoid; }
+      body{ background:#fff; }
+    }
+    .btn{ appearance:none; border:1px solid var(--border); background:var(--accent); color:#fff; padding:8px 12px; border-radius:8px; font-size:14px; cursor:pointer }
+    .btn.alt{ background:#fff; color:var(--text) }
+  </style>
+</head>
+<body>
+  <div class="container stack">
+    <div class="back"><a href="../../index.html">← Till kalkylatorer</a></div>
+    <header><h1>Inrapportering – Förpackningar</h1></header>
+
+    <div class="grid cols-2">
+      <div class="card input-card">
+        <h2>Indata</h2>
+        <p class="sub">Fyll i antal som använts under perioden (t.ex. kvartal).</p>
+        <div class="grid" style="grid-template-columns:1fr;gap:4px">
+          <label><span class="lab">Grimmor (st)</span><input id="antal_grimma" type="number" step="1" value="0"/></label>
+          <label><span class="lab">Folie (st)</span><input id="antal_folie" type="number" step="1" value="0"/></label>
+          <label><span class="lab">Kapsyl (st)</span><input id="antal_kapsyl" type="number" step="1" value="0"/></label>
+          <label><span class="lab">Flaska (st)</span><input id="antal_flaska" type="number" step="1" value="0"/></label>
+          <label><span class="lab">Etikett (st)</span><input id="antal_etikett" type="number" step="1" value="0"/></label>
+          <label><span class="lab">Kork (st)</span><input id="antal_kork" type="number" step="1" value="0"/></label>
+        </div>
+      </div>
+
+      <div class="card const-card">
+        <h2>Vikter (g/st)</h2>
+        <p class="sub">Förifyllt – går att justera vid behov.</p>
+        <div class="grid-2">
+          <label><span class="lab">Grimma – Aluminium (Hushåll)</span><input id="grimma_al" type="number" step="0.1" value="1.6"/></label>
+          <label><span class="lab">Grimma – Stålplåt (Hushåll)</span><input id="grimma_stal" type="number" step="0.1" value="3.4"/></label>
+
+          <label><span class="lab">Folie – Plast B (Hushåll)</span><input id="folie_plast" type="number" step="0.1" value="2.8"/></label>
+
+          <label><span class="lab">Kapsyl – Stålplåt (Verksamhet)</span><input id="kapsyl_stal_v" type="number" step="0.1" value="1.4"/></label>
+          <label><span class="lab">Kapsyl – Plast (Verksamhet)</span><input id="kapsyl_plast_v" type="number" step="0.1" value="1.1"/></label>
+
+          <label><span class="lab">Flaska – Glas (Hushåll)</span><input id="flaska_glas" type="number" step="1" value="835"/></label>
+
+          <label><span class="lab">Etikett – Papper (Hushåll)</span><input id="etikett_papper" type="number" step="0.1" value="2.5"/></label>
+
+          <label><span class="lab">Kork – Trä (Hushåll)</span><input id="kork_tra" type="number" step="0.1" value="9.3"/></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>Resultat</h2>
+        <p class="sub">Summeringar per materialström (kg).</p>
+        <div class="output-pill"><span class="muted">Aluminium – Hushåll</span><span class="kpi"><span class="dot"></span><b id="kg_al_hh">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Stålplåt – Hushåll</span><span class="kpi"><span class="dot"></span><b id="kg_stal_hh">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Plast B – Hushåll</span><span class="kpi"><span class="dot"></span><b id="kg_plastB_hh">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Glas – Hushåll</span><span class="kpi"><span class="dot"></span><b id="kg_glas_hh">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Papper – Hushåll</span><span class="kpi"><span class="dot"></span><b id="kg_papper_hh">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Trä – Hushåll</span><span class="kpi"><span class="dot"></span><b id="kg_tra_hh">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Stålplåt – Verksamhet</span><span class="kpi"><span class="dot"></span><b id="kg_stal_vk">–</b> kg</span></div>
+        <div class="output-pill"><span class="muted">Plast – Verksamhet</span><span class="kpi"><span class="dot"></span><b id="kg_plast_vk">–</b> kg</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Instruktion</h2>
+        <p class="sub">Kvartalsvis inrapportering till TMR.</p>
+        <ul>
+          <li>Varje kvartal: Hämta antal från mottagningsrapporterna.</li>
+          <li>Fyll i antal i fälten till vänster.</li>
+          <li>Justera vikter (grå rutan) endast om något ändrats.</li>
+          <li>Rapportera summerade vikter (kg) per materialström till TMR.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Detaljer per komponent</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Del</th>
+            <th>Antal (st)</th>
+            <th>Vikt per st (g)</th>
+            <th>Total (kg)</th>
+            <th>Materialström</th>
+          </tr>
+        </thead>
+        <tbody id="detailBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Actions -->
+    <div class="card no-print" style="display:flex; justify-content:flex-end; gap:8px">
+      <button class="btn alt" onclick="window.print()">Skriv ut</button>
+      <button class="btn" onclick="window.print()">Spara till PDF</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const $=id=>document.getElementById(id);
+      const kg=x=>Number.isFinite(x)?(x/1000).toFixed(2):'–';
+      // Antal
+      const antal = {
+        grimma: $('antal_grimma'),
+        folie: $('antal_folie'),
+        kapsyl: $('antal_kapsyl'),
+        flaska: $('antal_flaska'),
+        etikett: $('antal_etikett'),
+        kork: $('antal_kork'),
+      };
+      // Vikter g/st
+      const v = {
+        grimma_al: $('grimma_al'),
+        grimma_stal: $('grimma_stal'),
+        folie_plast: $('folie_plast'),
+        kapsyl_stal_v: $('kapsyl_stal_v'),
+        kapsyl_plast_v: $('kapsyl_plast_v'),
+        flaska_glas: $('flaska_glas'),
+        etikett_papper: $('etikett_papper'),
+        kork_tra: $('kork_tra'),
+      };
+      // Resultat-outputs
+      const out = {
+        kg_al_hh: $('kg_al_hh'),
+        kg_stal_hh: $('kg_stal_hh'),
+        kg_plastB_hh: $('kg_plastB_hh'),
+        kg_glas_hh: $('kg_glas_hh'),
+        kg_papper_hh: $('kg_papper_hh'),
+        kg_tra_hh: $('kg_tra_hh'),
+        kg_stal_vk: $('kg_stal_vk'),
+        kg_plast_vk: $('kg_plast_vk'),
+      };
+      const detailBody = $('detailBody');
+      function val(n){ return Number(n)||0; }
+      function recalc(){
+        // Per-komponent totaler (g)
+        const grimma_al_g = val(antal.grimma.value)*val(v.grimma_al.value);
+        const grimma_stal_g = val(antal.grimma.value)*val(v.grimma_stal.value);
+        const folie_plast_g = val(antal.folie.value)*val(v.folie_plast.value);
+        const kapsyl_stal_v_g = val(antal.kapsyl.value)*val(v.kapsyl_stal_v.value);
+        const kapsyl_plast_v_g = val(antal.kapsyl.value)*val(v.kapsyl_plast_v.value);
+        const flaska_glas_g = val(antal.flaska.value)*val(v.flaska_glas.value);
+        const etikett_papper_g = val(antal.etikett.value)*val(v.etikett_papper.value);
+        const kork_tra_g = val(antal.kork.value)*val(v.kork_tra.value);
+        // Summeringar (g)
+        const sum_al_hh = grimma_al_g;
+        const sum_stal_hh = grimma_stal_g;
+        const sum_plastB_hh = folie_plast_g;
+        const sum_glas_hh = flaska_glas_g;
+        const sum_papper_hh = etikett_papper_g;
+        const sum_tra_hh = kork_tra_g;
+        const sum_stal_vk = kapsyl_stal_v_g;
+        const sum_plast_vk = kapsyl_plast_v_g;
+        // Outputs (kg)
+        out.kg_al_hh.textContent = kg(sum_al_hh);
+        out.kg_stal_hh.textContent = kg(sum_stal_hh);
+        out.kg_plastB_hh.textContent = kg(sum_plastB_hh);
+        out.kg_glas_hh.textContent = kg(sum_glas_hh);
+        out.kg_papper_hh.textContent = kg(sum_papper_hh);
+        out.kg_tra_hh.textContent = kg(sum_tra_hh);
+        out.kg_stal_vk.textContent = kg(sum_stal_vk);
+        out.kg_plast_vk.textContent = kg(sum_plast_vk);
+        // Detaljtabell
+        detailBody.innerHTML = '';
+        const rows = [
+          ['Grimma – Aluminium', val(antal.grimma.value), val(v.grimma_al.value), grimma_al_g, 'Aluminium – Hushåll'],
+          ['Grimma – Stålplåt', val(antal.grimma.value), val(v.grimma_stal.value), grimma_stal_g, 'Stålplåt – Hushåll'],
+          ['Folie – Plast B', val(antal.folie.value), val(v.folie_plast.value), folie_plast_g, 'Plast B – Hushåll'],
+          ['Kapsyl – Stålplåt', val(antal.kapsyl.value), val(v.kapsyl_stal_v.value), kapsyl_stal_v_g, 'Stålplåt – Verksamhet'],
+          ['Kapsyl – Plast', val(antal.kapsyl.value), val(v.kapsyl_plast_v.value), kapsyl_plast_v_g, 'Plast – Verksamhet'],
+          ['Flaska – Glas', val(antal.flaska.value), val(v.flaska_glas.value), flaska_glas_g, 'Glas – Hushåll'],
+          ['Etikett – Papper', val(antal.etikett.value), val(v.etikett_papper.value), etikett_papper_g, 'Papper – Hushåll'],
+          ['Kork – Trä', val(antal.kork.value), val(v.kork_tra.value), kork_tra_g, 'Trä – Hushåll'],
+        ];
+        rows.forEach(r=>{
+          const tr=document.createElement('tr');
+          function td(t){ const x=document.createElement('td'); x.textContent = (typeof t==='number')? (Number.isFinite(t)?t:0) : t; return x; }
+          tr.appendChild(td(r[0]));
+          tr.appendChild(td(r[1]));
+          tr.appendChild(td(r[2]));
+          tr.appendChild(td((r[3]/1000).toFixed(2)));
+          tr.appendChild(td(r[4]));
+          detailBody.appendChild(tr);
+        });
+      }
+      [...Object.values(antal), ...Object.values(v)].forEach(el=>{ el.addEventListener('input', recalc); el.addEventListener('change', recalc); });
+      recalc();
+    });
+  </script>
+</body>
+</html>
